@@ -1,6 +1,6 @@
 ---
 name: daily-crypto-narrative-report
-description: Generate a daily crypto market narrative & signal briefing — which stories are converging across sources, where capital is or isn't following the narrative, and the market regime. Use when the user asks for a daily or morning crypto report, a market-narrative summary, "what's moving in crypto", sector rotation, a research digest, or a briefing for a community or newsletter. Powered by the signaldaemon MCP server (tools: get_market_narratives, get_clean_feed).
+description: Generate a daily crypto market narrative & signal briefing — which stories are converging across sources, where capital is or isn't following the narrative, and the market regime. Use when the user asks for a daily or morning crypto report, a market-narrative summary, "what's moving in crypto", sector rotation, a research digest, or a briefing for a community or newsletter. Powered by the signaldaemon MCP server (MCP tools get_market_narratives and get_clean_feed).
 version: 1.0.0
 license: MIT
 metadata:
