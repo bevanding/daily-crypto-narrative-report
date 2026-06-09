@@ -10,20 +10,13 @@ is or isn't following the narrative, and the market regime — and it **fails sa
 
 ## Requires
 
-The **signaldaemon MCP server** connected in your agent (tools
-`get_market_narratives`, `get_clean_feed`). Self-serve a key at
-https://signaldaemon.com/#access, then add to `~/.hermes/config.yaml`:
+The **signaldaemon MCP server** connected in your agent (it provides the tools
+`get_market_narratives` and `get_clean_feed`). Self-serve a key and follow the MCP
+setup at **https://signaldaemon.com/api** (endpoint `https://api.signaldaemon.com/mcp`,
+authenticated with your `x-api-key`).
 
-```yaml
-mcp_servers:
-  signaldaemon:
-    url: "https://api.signaldaemon.com/mcp"
-    headers:
-      x-api-key: "<KEY>"
-```
-
-This skill contains **no secrets** — the key lives in the MCP config above, not in
-the skill.
+This skill contains **no secrets** — the API key is held by the MCP server
+connection, not by this skill.
 
 ## Use
 

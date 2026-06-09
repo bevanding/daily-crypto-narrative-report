@@ -24,13 +24,13 @@ signal, not a price API).
 
 ## Prerequisite & credentials
 
-Requires the **signaldaemon MCP server** to be connected (tools
-`get_market_narratives`, `get_clean_feed`). **This skill holds no secrets** — the
-API key lives in the MCP server config (`~/.hermes/config.yaml` →
-`mcp_servers.signaldaemon.headers.x-api-key`), not here. If the tools are not
-available, tell the user to add the server —
-`https://api.signaldaemon.com/mcp`, header `x-api-key: <KEY>` (self-serve a key at
-https://signaldaemon.com/#access) — and **stop**. Never fabricate market data when
+Requires the **signaldaemon MCP server** to be connected (it provides the tools
+`get_market_narratives` and `get_clean_feed`). **This skill holds no secrets** —
+the API key is held by the signaldaemon MCP server connection, not by this skill.
+If the tools are not available, tell the user to connect the signaldaemon MCP
+server (endpoint `https://api.signaldaemon.com/mcp`, authenticated with their own
+`x-api-key`; self-serve a key and see setup at https://signaldaemon.com/api) and
+**stop**. Never fabricate market data when
 the tools are unavailable.
 
 ## Procedure
