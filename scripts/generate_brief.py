@@ -136,7 +136,7 @@ def cast(data: dict) -> str:
         items.append(f"{i}. {n.get('name')}{note}")
     out = (head + "\nwhat the market is talking about (by cross-source convergence):\n"
            + "\n".join(items) + "\nfull brief → signaldaemon.com")
-    if len(out) > 315:  # trim annotations if over the cast budget
+    if len(out.encode()) > 700:  # cast hard limit is 1024 bytes; keep headroom
         items = [f"{i}. {n.get('name')}" for i, n in enumerate(narratives[:4], 1)]
         out = (head + "\ntop narratives by cross-source convergence:\n"
                + "\n".join(items) + "\nfull brief → signaldaemon.com")
