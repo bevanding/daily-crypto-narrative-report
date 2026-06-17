@@ -24,7 +24,13 @@ def fetch_live(api_key: str) -> dict:
     req = urllib.request.Request(
         API_URL,
         data=json.dumps({"limit": 8}).encode(),
-        headers={"x-api-key": api_key, "Content-Type": "application/json"},
+        headers={
+            "x-api-key": api_key,
+            "Content-Type": "application/json",
+            # set an explicit UA: the default "Python-urllib/x" is blocked by the
+            # CDN/WAF as a bot (403). Any real urllib client needs this too.
+            "User-Agent": "signaldaemon-daily-brief/1.0 (+https://signaldaemon.com)",
+        },
     )
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
