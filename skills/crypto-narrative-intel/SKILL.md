@@ -1,7 +1,7 @@
 ---
 name: crypto-narrative-intel
-description: Give a trading or research agent crypto/AI/macro narrative context before it acts — cross-source narrative convergence (how many independent sources agree on a story now) and capital divergence (narrative vs. price, two signed axes). Use alongside a price feed and/or a stock-sentiment source; this is the crypto-narrative layer, read-only, fails safe. Powered by the signaldaemon API/MCP.
-version: 1.0.0
+description: Give a trading or research agent crypto/AI/macro narrative context before it acts — cross-source narrative convergence (how many independent sources agree on a story now) and capital divergence (narrative vs. price, two signed axes). Use alongside a price feed and/or a stock-sentiment source; this is the crypto-narrative layer, read-only, fails safe. Includes a one-call pre-trade gate that vets a candidate trade (symbol, side) against the narrative layer → support/caution/contradict/no_signal. Powered by the signaldaemon API/MCP.
+version: 1.1.0
 license: MIT
 metadata:
   homepage: https://signaldaemon.com
@@ -42,6 +42,7 @@ https://signaldaemon.com/console. Pass the key as the `x-api-key` header.
 
 - `get_market_narratives(limit)` — the day's ranked narratives + a `market_snapshot`.
 - `get_clean_feed(query, category, limit)` — de-noised, source-attributed feed for a topic.
+- `vet_trade(symbol, side)` — **pre-trade gate**: vet a candidate trade against the narrative layer → `support`/`caution`/`contradict`/`no_signal` + reason + confidence (abstains when there's no coverage).
 
 **REST.**
 
@@ -49,6 +50,34 @@ https://signaldaemon.com/console. Pass the key as the `x-api-key` header.
 curl -s https://api.signaldaemon.com/v1/narratives \
   -H "x-api-key: <KEY>" -H "content-type: application/json" -d '{"limit":8}'
 ```
+
+## Pre-trade gate — one call (`vet_trade`)
+
+If you already have a candidate trade, this is the fast path: instead of pulling and
+reading every narrative yourself (the Procedure below), hand the gate your
+`{symbol, side}` and it runs that read for you and returns a single stance.
+
+**MCP:** `vet_trade(symbol, side)`  ·  **REST:** `POST /v1/vet`
+
+```bash
+curl -s https://api.signaldaemon.com/v1/vet \
+  -H "x-api-key: <KEY>" -H "content-type: application/json" \
+  -d '{"symbol":"ETH","side":"long"}'
+```
+
+Returns:
+
+- `verdict` — `support` (your trade is *with* a funded, corroborated narrative) ·
+  `caution` (story loud but capital not confirming, or mixed) · `contradict` (your
+  trade runs *against* where capital + narrative point) · `no_signal` (no single-asset
+  narrative coverage — it abstains rather than guess).
+- `confidence` (0–1), the matched `narrative`, a plain-language `reason`, and the raw
+  `evidence` (regime + strength + the two divergence axes).
+
+It vets the **narrative dimension only** — it does not predict price or place orders,
+and `support`/`contradict` describe alignment with the narrative layer, **not** a
+buy/sell call. Your strategy still decides. Use the manual Procedure below when you
+have no specific candidate or want the full cross-narrative picture.
 
 ## Procedure (before a trade/decision)
 
@@ -76,6 +105,7 @@ curl -s https://api.signaldaemon.com/v1/narratives \
   `direction=down` AND `vs_market=outperform` — it fell *slower* than the market
   (relative strength), not a bullish price move. Always report both axes.
 - **Don't treat divergence as alpha** — it's context until proven; don't size trades on it alone.
+- **Don't read `vet_trade: support` as "buy"** (or `contradict` as "sell"). It rates alignment with the *narrative layer* only; your own strategy/TA still makes the call.
 - **Don't invent prices** for `no_asset` narratives, and don't pad `thin` coverage.
 - **Don't use this for equities single-name sentiment** — it's crypto/AI/macro narrative,
   sector/narrative-level. Pair with a stock-sentiment source for stocks.
